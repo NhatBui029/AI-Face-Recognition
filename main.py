@@ -7,7 +7,24 @@ tk = Tk()
 tk.title('Btl AI')
 tk.geometry('600x500')
 
-def actionButAdd(id):
+
+fr =  open('file.txt','r') 
+
+names = ['']*100
+names.insert(0,'None')
+
+for line in fr:
+    id,name = line.rstrip().split('/')
+    names.insert(int(id),name)
+
+def actionButAdd(id,name):
+    fw =  open('file.txt','a') 
+    fw.write(id+'/'+name+'\n') 
+    fw.close()
+    for line in fr:
+        id,name = line.rstrip().split('/')
+        names.insert(int(id),name)
+
     cam = cv2.VideoCapture(0)
     cam.set(3, 640) # set video width
     cam.set(4, 480) # set video height
@@ -40,18 +57,20 @@ def actionButAdd(id):
         k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
         if k == 27:
             break
-        elif count >= 200: # Take 30 face sample and stop video
+        elif count >= 30: # Take 30 face sample and stop video
             break
 
     # Do a bit of cleanup
     print("\n [INFO] Exiting Program and cleanup stuff")
     cam.release()
     cv2.destroyAllWindows()
-    Label(tk,text='Đã thêm thành công User '+ id,font=('Times New Roman',15),fg='blue').place(x=30,y=150)
+    Label(tk,text='Đã thêm thành công User '+ id,font=('Times New Roman',15),fg='blue').place(x=30,y=190)
     entryId.delete(0,'end')
+    entryName.delete(0,'end')
     subprocess.run(['python', '02_face_training.py'])
 
 def actionButDetect():  
+    
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read('trainer/trainer.yml')
     cascadePath = "haarcascade_frontalface_default.xml"
@@ -64,8 +83,6 @@ def actionButDetect():
 
     user = ' '
 
-    # names related to ids: example ==> Marcelo: id=1,  etc
-    names = ['None','Bui Tuan Nhat','Quang','nam']
 
     # Initialize and start realtime video capture
     cam = cv2.VideoCapture(0)  
@@ -120,21 +137,26 @@ def actionButDetect():
     print("\n [INFO] Exiting Program and cleanup stuff")
     cam.release()
     cv2.destroyAllWindows()
-    print(user)
     Label(tk,text='Welcome User '+ user,font=('Times New Roman',13),fg='red').place(x=300,y=70)
 
 
 
 labelAdd = Label(tk,text='Thêm khuôn mặt',font=('Times New Roman',18)).place(x=30,y=30)
+
 labelId = Label(tk,text='Nhập Id: ',font=('Times New Roman',13)).place(x=30,y=70)
 entryId = Entry(tk,width=10,font=('Times New Roman',13))
 entryId.place(x=100,y=70)
-butAdd = Button(tk,text='Them',font=('Times New Roman',13),command=lambda: actionButAdd(entryId.get()))
-butAdd.place(x=30,y=110)
+
+labelName = Label(tk,text='Nhập tên: ',font=('Times New Roman',13)).place(x=30,y=110)
+entryName = Entry(tk,width=10,font=('Times New Roman',13))
+entryName.place(x=100,y=110)
+
+butAdd = Button(tk,text='Them',font=('Times New Roman',13),command=lambda: actionButAdd(entryId.get(),entryName.get()))
+butAdd.place(x=30,y=150)
 
 
 labelDetect = Label(tk,text='Nhận diện khuôn mặt',font=('Times New Roman',18)).place(x=300,y=30)
-butDetect = Button(tk,text='Nhận diện',font=('Times New Roman',13),command=actionButDetect)
+butDetect = Button(tk,text='Nhận diện',font=('Times New Roman',13),command=lambda: actionButDetect())
 butDetect.place(x=300,y=110)
 
 
