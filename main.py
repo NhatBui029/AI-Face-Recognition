@@ -18,13 +18,7 @@ for line in fr:
     names.insert(int(id),name)
 
 def actionButAdd(id,name):
-    fw =  open('file.txt','a') 
-    fw.write(id+'/'+name+'\n') 
-    fw.close()
-    for line in fr:
-        id,name = line.rstrip().split('/')
-        names.insert(int(id),name)
-
+    
     cam = cv2.VideoCapture(0)
     cam.set(3, 640) # set video width
     cam.set(4, 480) # set video height
@@ -59,6 +53,15 @@ def actionButAdd(id,name):
             break
         elif count >= 30: # Take 30 face sample and stop video
             break
+
+    fw =  open('file.txt','a') 
+    fw.write(id+'/'+name+'\n') 
+    fw.close()
+    
+    for line in fr:
+        idd,namee = line.rstrip().split('/')
+        names.insert(int(idd),namee)
+
 
     # Do a bit of cleanup
     print("\n [INFO] Exiting Program and cleanup stuff")
