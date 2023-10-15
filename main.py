@@ -51,11 +51,13 @@ def actionButAdd(id,name):
         k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
         if k == 27:
             break
-        elif count >= 30: # Take 30 face sample and stop video
+        elif count >= 100: # Take 30 face sample and stop video
             break
 
-    fw =  open('file.txt','a') 
-    fw.write(id+'/'+name+'\n') 
+    with open('file.txt', 'a', encoding='utf-8') as fw:
+        fw.write(id + '/' + name + '\n')
+
+
     fw.close()
     
     for line in fr:
@@ -67,14 +69,14 @@ def actionButAdd(id,name):
     print("\n [INFO] Exiting Program and cleanup stuff")
     cam.release()
     cv2.destroyAllWindows()
-    Label(tk,text='Đã thêm thành công User '+ id,font=('Times New Roman',15),fg='blue').place(x=30,y=190)
+    Label(tk,text='Đã thêm thành công User '+ name,font=('Times New Roman',15),fg='blue').place(x=30,y=190)
     entryId.delete(0,'end')
     entryName.delete(0,'end')
     subprocess.run(['python', '02_face_training.py'])
 
 def actionButDetect():  
     
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer = cv2.face.LBPHFaceRecognizer_create() 
     recognizer.read('trainer/trainer.yml')
     cascadePath = "haarcascade_frontalface_default.xml"
     faceCascade = cv2.CascadeClassifier(cascadePath)
@@ -110,16 +112,16 @@ def actionButDetect():
             minNeighbors = 5,
             minSize = (int(minW), int(minH)),
         )
-
+        kt = 0
         for(x,y,w,h) in faces:
 
             cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
 
             id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
            
-        
             # Check if confidence is less them 100 ==> "0" is perfect match 
-            if (confidence < 100):
+            if (confidence < 50):
+                kt=1
                 id = names[id]
                 confidence = "  {0}%".format(round(100 - confidence))
                 user = id
@@ -133,7 +135,7 @@ def actionButDetect():
         cv2.imshow('camera',img) 
 
         k = cv2.waitKey(10) & 0xff # Press 'ESC' for exiting video
-        if k == 27:
+        if k == 27 or kt == 1:
             break
 
     # Do a bit of cleanup

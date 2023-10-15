@@ -1,17 +1,14 @@
-''''
-Capture multiple Faces from multiple users to be stored on a DataBase (dataset directory)
-	==> Faces will be stored on a directory: dataset/ (if does not exist, pls create one)
-	==> Each face will have a unique numeric integer ID as 1, 2, 3, etc                       
-
-Based on original code by Anirban Kar: https://github.com/thecodacus/Face-Recognition
-
-Developed by Marcelo Rovai - MJRoBot.org @ 21Feb18
-
-'''
-
 import cv2
 import os
 import subprocess
+import sys
+
+# a = int(sys.argv[1])
+# b = int(sys.argv[2])
+
+# print(a+b)
+
+# sys.stdout.flush()
 
 cam = cv2.VideoCapture(0)
 cam.set(3, 640) # set video width
@@ -19,11 +16,8 @@ cam.set(4, 480) # set video height
 
 face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
-# For each person, enter one numeric face id
-face_id = input('\n enter user id end press <return> ==>  ')
+face_id = int(sys.argv[1])
 
-print("\n [INFO] Initializing face capture. Look the camera and wait ...")
-# Initialize individual sampling face count
 count = 0
 
 while(True):
@@ -46,11 +40,18 @@ while(True):
     if k == 27:
         break
     elif count >= 30: # Take 30 face sample and stop video
-         break
+        break
 
-# Do a bit of cleanup
-print("\n [INFO] Exiting Program and cleanup stuff")
+with open('file.txt', 'a', encoding='utf-8') as fw:
+    fw.write(str(face_id)  + '/' + sys.argv[2] + '\n')
+
+fw.close()
+
 cam.release()
 cv2.destroyAllWindows()
+
 subprocess.run(['python', '02_face_training.py'])
 
+sys.stdout.reconfigure(encoding='utf-8')
+print('\u0110ã thêm thành công Sinh viên :', sys.argv[2])
+sys.stdout.flush()

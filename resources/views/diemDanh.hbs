@@ -1,0 +1,27 @@
+<h2>Danh sách lớp học</h2>
+<table>
+    <tr>
+        <th>Môn học</th>
+        <th>Nhóm</th>
+        <th>Phòng học</th>
+        <th>Giảng viên</th>
+        <th>Bắt đầu</th>
+        <th>Kết thúc</th>
+        <th>Sĩ số</th>
+        <th></th>
+    </tr>
+    {{#each classes}}
+    <tr>
+        <td>{{this.monhoc}}</td>
+        <td>{{this.nhom}}</td>
+        <td>{{this.phonghoc}}</td>
+        <td>{{this.giangvien}}</td>
+        <td>{{formatDate this.start}}</td>
+        <td>{{formatDate this.end}}</td>
+        <td>{{this.siso}}</td>
+        <td>
+            <a href="/diemDanh/{{this._id}}">Điểm danh</a>
+        </td>
+    </tr>
+    {{/each}}
+</table>
